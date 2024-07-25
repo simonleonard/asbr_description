@@ -16,12 +16,19 @@ public:
   : Node("initial_joint_state_publisher")
   {
     publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
+    
+    // Publish the initial joint state immediately upon node startup
+    publish_initial_state();
+
+    // Optionally continue publishing at regular intervals to ensure the state is maintained
     timer_ = this->create_wall_timer(
-      5000ms, std::bind(&InitialJointStatePublisher::timer_callback, this));
+      std::chrono::milliseconds(500), std::bind(&InitialJointStatePublisher::publish_initial_state, this));
+
+    RCLCPP_INFO(this->get_logger(), "Initial Joint State Publisher has been started.");
   }
 
 private:
-  void timer_callback()
+  void publish_initial_state()
   {
     auto message = sensor_msgs::msg::JointState();
     message.header.stamp = this->now();
@@ -30,10 +37,9 @@ private:
     message.position = {0.0, -1.57, 0.0, -1.57, 0.0, 0.0}; // Set your desired initial positions here
 
     publisher_->publish(message);
-    RCLCPP_INFO(this->get_logger(), "Initial joint states published. Shutting down node.");
-    rclcpp::shutdown(); // Shutdown after publishing once
+    RCLCPP_INFO(this->get_logger(), "Published initial joint state");
   }
-  
+
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
 };
