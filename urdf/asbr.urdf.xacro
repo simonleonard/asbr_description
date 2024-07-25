@@ -1,14 +1,18 @@
 <?xml version="1.0"?>
 <robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <!-- Developer: Seyi R. Afolayan -->
-    <!-- Arguments for UR5e hardware setup -->
+
     <xacro:arg name="name" default="ur5e_robot"/>
+    <!-- Include the URDF for the UR robot -->
+    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+    
+    <!-- ur parameters -->
     <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
-    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
-    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
-    <xacro:arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
-    <xacro:arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
+    <xacro:arg name="tf_prefix" default="" />
+    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+    <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+    <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
     <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
     <xacro:arg name="safety_limits" default="false"/>
     <xacro:arg name="safety_pos_margin" default="0.15"/>
@@ -36,10 +40,9 @@
     <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
-    <xacro:arg name="initial_positions" default="{shoulder_pan_joint: 0.0, shoulder_lift_joint: -1.57, elbow_joint: 1.57, wrist_1_joint: 0.0, wrist_2_joint: -1.57, wrist_3_joint: 0.0}"/>
 
-    <!-- Include the URDF for the UR robot -->
-    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+   <link name="world" />
+
 
     <!-- Instantiate the UR robot macro -->
     <xacro:ur_robot
@@ -59,7 +62,6 @@
         sim_gazebo="$(arg sim_gazebo)"
         sim_ignition="$(arg sim_ignition)"
         headless_mode="$(arg headless_mode)"
-        initial_positions="$(arg initial_positions)"
         use_tool_communication="$(arg use_tool_communication)"
         tool_voltage="$(arg tool_voltage)"
         tool_parity="$(arg tool_parity)"
@@ -81,4 +83,5 @@
     >
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:ur_robot>
+    
 </robot>
