@@ -11,6 +11,8 @@ find_package(ur_description REQUIRED)
 find_package(robotiq_description REQUIRED)
 find_package(realsense2_description REQUIRED)
 find_package(xacro REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 install(
   DIRECTORY urdf launch 
