@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <!-- Developer: Seyi R. Afolayan -->
-    <!-- Arguments required by ur.urdf.xacro -->
+    <!-- Arguments for UR5e hardware setup -->
     <xacro:arg name="name" default="ur5e_robot"/>
     <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
@@ -36,9 +36,15 @@
     <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
-    <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
-    <xacro:arg name="simulation_controllers" default=""/>
-    
+    <xacro:arg name="initial_positions" default="${xacro.dict(
+        shoulder_pan_joint=0.0,
+        shoulder_lift_joint=-1.57,
+        elbow_joint=1.57,
+        wrist_1_joint=0.0,
+        wrist_2_joint=-1.57,
+        wrist_3_joint=0.0
+    )}"/>
+
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
 
@@ -60,7 +66,7 @@
         sim_gazebo="$(arg sim_gazebo)"
         sim_ignition="$(arg sim_ignition)"
         headless_mode="$(arg headless_mode)"
-        initial_positions="${xacro.load_yaml(initial_positions_file)}"
+        initial_positions="$(arg initial_positions)"
         use_tool_communication="$(arg use_tool_communication)"
         tool_voltage="$(arg tool_voltage)"
         tool_parity="$(arg tool_parity)"
@@ -82,27 +88,4 @@
     >
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:ur_robot>
-
-    <xacro:if value="$(arg sim_gazebo)">
-        <!-- Gazebo plugins -->
-        <gazebo reference="world">
-        </gazebo>
-        <gazebo>
-            <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-                <parameters>$(arg simulation_controllers)</parameters>
-            </plugin>
-        </gazebo>
-    </xacro:if>
-
-    <xacro:if value="$(arg sim_ignition)">
-        <!-- Ignition plugins -->
-        <gazebo reference="world">
-        </gazebo>
-        <gazebo>
-            <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-                <parameters>$(arg simulation_controllers)</parameters>
-                <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
-            </plugin>
-        </gazebo>
-    </xacro:if>
 </robot>
