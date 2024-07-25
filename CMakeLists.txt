@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 add_executable(initial_joint_state_publisher src/initial_joint_state_publisher.cpp)
+ament_target_dependencies(initial_joint_state_publisher rclcpp sensor_msgs)
 
 install(
   DIRECTORY urdf launch 
