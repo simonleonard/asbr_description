@@ -34,7 +34,7 @@ private:
     message.header.stamp = this->now();
     message.name = {"shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint",
                     "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"};
-    message.position = {0.0, -1.57, 0.0, -1.57, 0.0, 0.0}; // Set your desired initial positions here
+    message.position = {0.0, -1.57, 0.0, -1.57, 0.0, 0.0}; 
 
     publisher_->publish(message);
     RCLCPP_INFO(this->get_logger(), "Published initial joint state");
