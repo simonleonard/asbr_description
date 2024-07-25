@@ -22,4 +22,9 @@ install(
   DESTINATION share/${PROJECT_NAME}/
 )
 
+install(
+  TARGETS initial_joint_state_publisher
+  DESTINATION lib/${PROJECT_NAME}/
+)
+
 ament_package()
