@@ -14,6 +14,8 @@ find_package(xacro REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+add_executable(initial_joint_state_publisher src/initial_joint_state_publisher.cpp)
+
 install(
   DIRECTORY urdf launch 
   DESTINATION share/${PROJECT_NAME}/
