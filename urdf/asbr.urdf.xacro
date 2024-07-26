@@ -7,7 +7,6 @@
     <!-- ur parameters -->
     <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
-    <xacro:arg name="tf_prefix" default="" />
     <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
     <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
     <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
@@ -114,7 +113,7 @@
     </xacro:if>
 
     <!-- Including the description for the realsense2 camera -->
-    <xacro:include filename="$(find realsense2_description)/urdf/sensor_d435.urdf.xacro" />
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
     <!-- Connecting the camera sensor to the camera link -->
     <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="true"> 
         <origin xyz="0.0 -0.06 0.0" rpy="-1.5708 -1.5708 0"/>
