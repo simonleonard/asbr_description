@@ -41,10 +41,8 @@
     <xacro:arg name="tool_tcp_port" default="54321"/>
     <xacro:property name="initial_positions_file" value="$(find ur_description)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)}"/>
-
     
     <link name="world" />
-
 
     <!-- Instantiate the UR robot macro -->
     <xacro:ur_robot
@@ -114,6 +112,13 @@
             </plugin>
         </gazebo>
     </xacro:if>
+
+    <!-- Including the description for the realsense2 camera -->
+    <xacro:include filename="$(find realsense2_description)/urdf/sensor_d435.urdf.xacro" />
+    <!-- Connecting the camera sensor to the camera link -->
+    <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="true"> 
+        <origin xyz="0.0 -0.06 0.0" rpy="-1.5708 -1.5708 0"/>
+    </xacro:sensor_d435>
 
     <xacro:if value="$(arg sim_ignition)">
         <!-- Gazebo plugins -->
