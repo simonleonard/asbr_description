@@ -16,15 +16,9 @@ public:
   : Node("initial_joint_state_publisher")
   {
     publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
-    
-    // Publish the initial joint state immediately upon node startup
-    publish_initial_state();
-
-    // Optionally continue publishing at regular intervals to ensure the state is maintained
-    timer_ = this->create_wall_timer(
-      std::chrono::milliseconds(500), std::bind(&InitialJointStatePublisher::publish_initial_state, this));
-
     RCLCPP_INFO(this->get_logger(), "Initial Joint State Publisher has been started.");
+    publish_timer_ = this->create_wall_timer(
+      500ms, std::bind(&InitialJointStatePublisher::publish_initial_state, this));
   }
 
 private:
@@ -34,20 +28,21 @@ private:
     message.header.stamp = this->now();
     message.name = {"shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint",
                     "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"};
-    message.position = {0.0, -1.57, 0.0, -1.57, 0.0, 0.0}; 
+    message.position = {0.0, -1.57, 0.0, -1.57, 0.0, 0.0};
 
     publisher_->publish(message);
     RCLCPP_INFO(this->get_logger(), "Published initial joint state");
   }
 
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr publisher_;
-  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::TimerBase::SharedPtr publish_timer_;
 };
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<InitialJointStatePublisher>());
+  auto node = std::make_shared<InitialJointStatePublisher>();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

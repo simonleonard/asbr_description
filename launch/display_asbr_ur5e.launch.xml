@@ -1,20 +1,23 @@
 <launch>
-
     <!-- Define the URDF path variable -->
     <let name="urdf_path" value="$(find-pkg-share asbr_description)/urdf/asbr.urdf.xacro"></let>
 
     <!-- Robot State Publisher Node -->
-    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+    <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
         <param name="robot_description" value="$(command 'xacro $(var urdf_path)')" />
     </node>
-
-    <!-- Joint State Publisher GUI Node -->
-    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui"/>
 
     <!-- RViz Visualization Node -->
     <node pkg="rviz2" exec="rviz2" output="screen"/>
 
-    <!-- Initial Joint State Publisher Node -->
-    <node pkg="asbr_description" exec="initial_joint_state_publisher" output="screen"/>
-    
+    <!-- Main Joint State Publisher with GUI -->
+    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" output="screen">
+        <!-- Directly set the initial joint positions as parameters -->
+        <param name="shoulder_pan_joint" type="double" value="0.0"/>
+        <param name="shoulder_lift_joint" type="double" value="-1.57"/>
+        <param name="elbow_joint" type="double" value="0.0"/>
+        <param name="wrist_1_joint" type="double" value="-1.57"/>
+        <param name="wrist_2_joint" type="double" value="0.0"/>
+        <param name="wrist_3_joint" type="double" value="0.0"/>
+    </node>
 </launch>
