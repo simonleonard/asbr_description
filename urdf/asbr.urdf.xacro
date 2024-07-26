@@ -16,7 +16,7 @@
     <xacro:arg name="safety_limits" default="false"/>
     <xacro:arg name="safety_pos_margin" default="0.15"/>
     <xacro:arg name="safety_k_position" default="20"/>
-    <xacro:arg name="use_fake_hardware" default="false"/>
+    <xacro:arg name="use_fake_hardware" default="true"/> <!-- I changed this to true -->
     <xacro:arg name="fake_sensor_commands" default="false"/>
     <xacro:arg name="sim_gazebo" default="false"/>
     <xacro:arg name="sim_ignition" default="false"/>
@@ -86,6 +86,24 @@
     >
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:ur_robot>
+
+
+    <!-- Including the necessary modules for the complete ur5e absr_description -->
+    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro" />
+
+
+    <!-- Using the gripper macro-->
+    <xacro:robotiq_gripper name="ur5e_gripper" prefix="" parent="world" use_fake_hardware="$(arg use_fake_hardware">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:robotiq_gripper>
+
+    <!-- Connecting the end-effector to the gripper-->
+    <joint name="end_effector_gripper_joint" type="fixed">
+        <parent link="tool0"/>
+        <child link="ur5e_gripper"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
 
     <xacro:if value="$(arg sim_gazebo)">
         <!-- Gazebo plugins -->
