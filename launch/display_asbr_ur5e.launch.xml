@@ -13,11 +13,11 @@
     <!-- Main Joint State Publisher with GUI -->
     <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" output="screen">
         <!-- Directly set the initial joint positions as parameters -->
-        <param name="shoulder_pan_joint" type="double" value="0.0"/>
-        <param name="shoulder_lift_joint" type="double" value="-1.57"/>
-        <param name="elbow_joint" type="double" value="0.0"/>
-        <param name="wrist_1_joint" type="double" value="-1.57"/>
-        <param name="wrist_2_joint" type="double" value="0.0"/>
-        <param name="wrist_3_joint" type="double" value="0.0"/>
+        <param name="shoulder_pan_joint" value="0.0"/>
+        <param name="shoulder_lift_joint" value="-1.57"/>
+        <param name="elbow_joint" value="0.0"/>
+        <param name="wrist_1_joint" value="-1.57"/>
+        <param name="wrist_2_joint" value="0.0"/>
+        <param name="wrist_3_joint" value="0.0"/>
     </node>
 </launch>
