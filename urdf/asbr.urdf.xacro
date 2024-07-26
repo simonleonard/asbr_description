@@ -79,16 +79,13 @@
         script_command_port="$(arg script_command_port)"
         reverse_port="$(arg reverse_port)"
         script_sender_port="$(arg script_sender_port)"
-        trajectory_port="$(arg trajectory_port)"
-    >
+        trajectory_port="$(arg trajectory_port)">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:ur_robot>
-
 
     <!-- Including the description for the gripper and adapter macro -->
     <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro" />
     <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
-
 
     <!-- Instantiating the gripper macro and the adapter macro-->
     <xacro:ur_to_robotiq prefix="" connected_to="tool0"/> <!-- This is the adapter-->
