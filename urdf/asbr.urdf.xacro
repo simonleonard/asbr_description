@@ -95,6 +95,7 @@
 
     <!-- Instantiating the gripper macro and the adapter macro-->
     <xacro:ur_to_robotiq prefix="" connected_to="tool0"/> <!-- This is the adapter-->
+    <!-- Attach the ur_to_robotiq_link (last link in the adapter urdf) to the gripper urdf-->
     <xacro:robotiq_gripper 
         name="ur5e_gripper" 
         prefix="" 
@@ -102,14 +103,6 @@
         use_fake_hardware="$(arg use_fake_hardware)">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
-
-    <!-- Connecting the end-effector to the gripper-->
-    <joint name="end_effector_gripper_joint" type="fixed">
-        <parent link="tool0"/>
-        <child link="robotiq_85_base_link"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-    </joint>
-
 
     <xacro:if value="$(arg sim_gazebo)">
         <!-- Gazebo plugins -->
