@@ -102,23 +102,8 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
 
-    <!-- Adding the intermediate link between the end effector and the sensor for potentially installing camera adapters -->
-    <link name="camera_link">
-    </link>
-    <joint name="camera_joint" type="fixed">
-        <axis xyz="0 0 1"/>
-        <origin xyz="-0.15 -0.05 0.015" rpy="0 0 0"/>
-        <parent link="tool0"/>
-        <child link="camera_link"/>
-    </joint>
-
-    <!-- Including the description for the realsense2 camera -->
-    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
-    <!-- Connecting the camera sensor to the camera link -->
-    <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="true"> 
-        <origin xyz="0.0 -0.06 0.0" rpy="-1.5708 -1.5708 0"/>
-    </xacro:sensor_d435>
-
+    <!-- Adding the camera --> 
+    <xacro:include filename="camera.xacro"/>
 
     <!-- *************Gazebo classic and Ignition gazebo if ever needed*********** -->
     <xacro:if value="$(arg sim_gazebo)">
