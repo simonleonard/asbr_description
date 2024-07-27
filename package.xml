@@ -15,7 +15,6 @@
   <depend>xacro</depend>
   <depend>aruco_ros</depend>
   <depend>ros_gz_image</depend>
-  <depend>ur_simulation_ignition</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
 
