@@ -58,6 +58,7 @@
           package. Users CANNOT rely on this file being available, or stored in
           this location. Nor can they rely on the existence of the macro.
   -->
+  <!-- Create link fixed to the world -->
   <link name="world"/>
   <ros2_control name="ur5e_robot" type="system">
     <hardware>
@@ -771,7 +772,7 @@
     </inertial>
   </link>
   <joint name="robotiq_85_base_joint" type="fixed">
-    <parent link="ur_to_robotiq_link"/>
+    <parent link="gripper_mount_link"/>
     <child link="robotiq_85_base_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
