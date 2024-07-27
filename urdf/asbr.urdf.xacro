@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
     <xacro:arg name="name" default="ur5e_robot"/>
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
@@ -38,6 +37,7 @@
     <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
+    <!-- I am not sure if this is working at all -->
     <xacro:property name="initial_positions_file" value="$(find ur_description)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)}"/>
     
@@ -98,6 +98,25 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
 
+    <!-- Adding the intermediate link between the end effector and the sensor for potentially installing camera adapters -->
+    <link name="camera_link">
+    </link>
+    <joint name="camera_joint" type="fixed">
+        <axis xyz="0 0 1"/>
+        <origin xyz="-0.15 -0.05 0.015" rpy="0 0 0"/>
+        <parent link="tool0"/>
+        <child link="camera_link"/>
+    </joint>
+
+    <!-- Including the description for the realsense2 camera -->
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+    <!-- Connecting the camera sensor to the camera link -->
+    <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="true"> 
+        <origin xyz="0.0 -0.06 0.0" rpy="-1.5708 -1.5708 0"/>
+    </xacro:sensor_d435>
+
+
+    <!-- *************Gazebo classic and Ignition gazebo if ever needed*********** -->
     <xacro:if value="$(arg sim_gazebo)">
         <!-- Gazebo plugins -->
         <gazebo reference="world">
@@ -108,13 +127,6 @@
             </plugin>
         </gazebo>
     </xacro:if>
-
-    <!-- Including the description for the realsense2 camera -->
-    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
-    <!-- Connecting the camera sensor to the camera link -->
-    <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="true"> 
-        <origin xyz="0.0 -0.06 0.0" rpy="-1.5708 -1.5708 0"/>
-    </xacro:sensor_d435>
 
     <xacro:if value="$(arg sim_ignition)">
         <!-- Gazebo plugins -->
@@ -129,3 +141,4 @@
     </xacro:if>
 
 </robot>
+ 
