@@ -13,8 +13,6 @@
   <depend>robotiq_description</depend>
   <depend>realsense2_description</depend>
   <depend>xacro</depend>
-  <depend>aruco_ros</depend>
-  <depend>ros_gz_image</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
 

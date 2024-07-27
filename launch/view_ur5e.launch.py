@@ -33,8 +33,6 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
@@ -154,25 +152,9 @@ def generate_launch_description():
         arguments=["-d", rviz_config_file],
     )
 
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([FindPackageShare('gazebo_ros'), '/launch/gazebo.launch.py']),
-    )
-    
-    spawn_entity = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        arguments=[
-            '-topic', 'robot_description',
-            '-entity', 'ur5e_robot',
-        ],
-        output='screen'
-    )
-
     nodes_to_start = [
-        gazebo,
         joint_state_publisher_node,
         robot_state_publisher_node,
-        spawn_entity,
         rviz_node
     ]
 
