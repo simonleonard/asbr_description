@@ -3,7 +3,7 @@
     <xacro:arg name="name" default="ur5e_robot"/>
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
-    <!-- ur parameters -->
+    <!-- main parameters -->
     <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
     <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
@@ -14,6 +14,8 @@
     <xacro:arg name="safety_limits" default="false"/>
     <xacro:arg name="safety_pos_margin" default="0.15"/>
     <xacro:arg name="safety_k_position" default="20"/>
+
+    <!-- Simulation and Control Parameters -->
     <xacro:arg name="use_fake_hardware" default="true"/> <!-- I changed this to true -->
     <xacro:arg name="fake_sensor_commands" default="false"/>
     <xacro:arg name="sim_gazebo" default="false"/>
@@ -28,6 +30,8 @@
     <xacro:arg name="reverse_port" default="50001"/>
     <xacro:arg name="script_sender_port" default="50002"/>
     <xacro:arg name="trajectory_port" default="50003"/>
+
+    <!-- Tool Communicatin Related Parameters-->
     <xacro:arg name="use_tool_communication" default="false"/>
     <xacro:arg name="tool_voltage" default="0"/>
     <xacro:arg name="tool_parity" default="0"/>
@@ -37,10 +41,10 @@
     <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
-    <!-- I am not sure if this is working at all -->
     <xacro:property name="initial_positions_file" value="$(find ur_description)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)}"/>
     
+    <!-- Create link fixed to the world -->
     <link name="world" />
 
     <!-- Instantiate the UR robot macro -->
@@ -93,7 +97,7 @@
     <xacro:robotiq_gripper 
         name="ur5e_gripper" 
         prefix="" 
-        parent="ur_to_robotiq_link" 
+        parent="gripper_mount_link" 
         use_fake_hardware="$(arg use_fake_hardware)">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
