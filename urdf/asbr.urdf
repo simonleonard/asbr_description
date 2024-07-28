@@ -952,4 +952,45 @@
       </geometry>
     </collision>
   </link>
+  <gazebo reference="camera_link">
+    <material>Gazebo/Red</material>
+    <sensor name="camera" type="camera">
+      <update_rate> 30.0 </update_rate>
+      <topic> image_raw </topic>
+      <pose> 0 0 0   0 -1.5708 1.5708 </pose>
+      <camera name="head">
+        <image>
+          <width> 1920 </width>
+          <height> 1080 </height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near> 0.02 </near>
+          <far> 3 </far>
+        </clip>
+        <noise>
+          <mean> 0.0 </mean>
+          <stddev> 0.01 </stddev>
+        </noise>
+        <lens>
+          <type> gnomolical </type>
+          <intrinsics>
+            <fx>1663</fx>
+            <fy>1663</fy>
+            <cx>960</cx>
+            <cy>540</cy>
+            <s>0</s>
+          </intrinsics>
+          <projection>
+            <p_fx>1663</p_fx>
+            <p_fy>1663</p_fy>
+            <p_cx>960</p_cx>
+            <p_cy>540</p_cy>
+          </projection>
+        </lens>
+      </camera>
+      <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+            </plugin>
+    </sensor>
+  </gazebo>
 </robot>
