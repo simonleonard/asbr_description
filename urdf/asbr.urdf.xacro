@@ -3,7 +3,7 @@
     <xacro:arg name="name" default="ur5e_robot"/>
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
-    <!-- main parameters -->
+    <!-- Defining Main parameters -->
     <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
     <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
@@ -32,7 +32,7 @@
     <xacro:arg name="script_sender_port" default="50002"/>
     <xacro:arg name="trajectory_port" default="50003"/>
 
-    <!-- Tool Communicatin Related Parameters-->
+    <!-- Tool Communication Related Parameters-->
     <xacro:arg name="use_tool_communication" default="false"/>
     <xacro:arg name="tool_voltage" default="0"/>
     <xacro:arg name="tool_parity" default="0"/>
@@ -42,6 +42,7 @@
     <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
+    <xacro:arg name="com_port" default="/dev/ttyUSB0"/> <!-- Change this based on what your ports say (lsusb)-->
     <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
     
@@ -90,7 +91,7 @@
     </xacro:ur_robot>
 
     <!-- Including the description for the gripper and adapter macro -->
-    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro" />
+    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
     <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
 
     <!-- Instantiating the gripper macro and the adapter macro-->
@@ -100,9 +101,11 @@
         name="ur5e_gripper" 
         prefix="" 
         parent="gripper_mount_link" 
-        use_fake_hardware="false"
-        sim_ignition="false"
-        sim_isaac="false">
+        sim_ignition="$(arg sim_ignition)"
+        sim_isaac="$(arg sim_isaac)"
+        use_fake_hardware="$(arg use_fake_hardware)"
+        fake_sensor_commands="$(arg fake_sensor_commands)"
+        >
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
 
