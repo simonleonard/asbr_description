@@ -43,6 +43,7 @@
     <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
     <xacro:arg name="tool_tcp_port" default="54321"/>
     <xacro:arg name="com_port" default="/dev/ttyUSB0"/> <!-- Change this based on what your ports say (lsusb)-->
+    <xacro:arg name="include_ros2_control" default="true"/>
     <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
     <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
     
