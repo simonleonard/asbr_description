@@ -11,23 +11,24 @@
     <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
     <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
     <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
-    <xacro:arg name="safety_limits" default="false"/>
+    <xacro:arg name="safety_limits" default="true"/> <!-- I set this to true cause it makes sense to do so -->
     <xacro:arg name="safety_pos_margin" default="0.15"/>
     <xacro:arg name="safety_k_position" default="20"/>
 
     <!-- Simulation and Control Parameters -->
-    <xacro:arg name="use_fake_hardware" default="true"/> <!-- I changed this to true -->
+    <xacro:arg name="use_fake_hardware" default="false"/> <!-- Using the real UR5 or UR5e--> 
     <xacro:arg name="fake_sensor_commands" default="false"/>
     <xacro:arg name="sim_gazebo" default="false"/>
     <xacro:arg name="sim_ignition" default="false"/>
-    <xacro:arg name="headless_mode" default="false"/>
-    <xacro:arg name="robot_ip" default="0.0.0.0"/>
+    <xacro:arg name="sim_isaac" default="false"/>
+    <xacro:arg name="headless_mode" default="true"/> <!-- Setting the headless mode to true for real robot-->
+    <xacro:arg name="robot_ip" default="172.22.22.2"/> <!-- Current robot_ip on the UR5-->
     <xacro:arg name="script_filename" default=""/>
     <xacro:arg name="output_recipe_filename" default=""/>
     <xacro:arg name="input_recipe_filename" default=""/>
-    <xacro:arg name="reverse_ip" default="0.0.0.0"/>
+    <xacro:arg name="reverse_ip" default="172.22.22.10"/> <!-- I think this is the other ip ad which is for my laptop 172.22.22.10-->
     <xacro:arg name="script_command_port" default="50004"/>
-    <xacro:arg name="reverse_port" default="50001"/>
+    <xacro:arg name="reverse_port" default="50001"/> 
     <xacro:arg name="script_sender_port" default="50002"/>
     <xacro:arg name="trajectory_port" default="50003"/>
 
@@ -64,6 +65,7 @@
         fake_sensor_commands="$(arg fake_sensor_commands)"
         sim_gazebo="$(arg sim_gazebo)"
         sim_ignition="$(arg sim_ignition)"
+        sim_isaac="$(arg sim_isaac)"
         headless_mode="$(arg headless_mode)"
         initial_positions="${xacro.load_yaml(initial_positions_file)}"
         use_tool_communication="$(arg use_tool_communication)"
@@ -98,7 +100,9 @@
         name="ur5e_gripper" 
         prefix="" 
         parent="gripper_mount_link" 
-        use_fake_hardware="$(arg use_fake_hardware)">
+        use_fake_hardware="false"
+        sim_ignition="false"
+        sim_isaac="false">
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
 
