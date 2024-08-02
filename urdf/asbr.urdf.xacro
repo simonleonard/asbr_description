@@ -66,7 +66,6 @@
         fake_sensor_commands="$(arg fake_sensor_commands)"
         sim_gazebo="$(arg sim_gazebo)"
         sim_ignition="$(arg sim_ignition)"
-        sim_isaac="$(arg sim_isaac)"
         headless_mode="$(arg headless_mode)"
         initial_positions="${xacro.load_yaml(initial_positions_file)}"
         use_tool_communication="$(arg use_tool_communication)"
@@ -105,6 +104,7 @@
         sim_isaac="$(arg sim_isaac)"
         use_fake_hardware="$(arg use_fake_hardware)"
         fake_sensor_commands="$(arg fake_sensor_commands)"
+        com_port="$(arg com_port)"
         >
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:robotiq_gripper>
