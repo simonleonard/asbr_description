@@ -82,12 +82,21 @@ def generate_launch_description():
         )
     )
 
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "headless_mode",
+            default_value="true",
+            description="Enable headless mode for robot control"
+        )
+    )
+
     # Initialize Arguments
     robot_ip = LaunchConfiguration("robot_ip")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
     initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     activate_joint_controller = LaunchConfiguration("activate_joint_controller")
+    headless_mode = LaunchConfiguration("headless_mode") # Suggested by Dr. Leonard
 
     base_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([FindPackageShare("ur_robot_driver"), "/launch/ur_control.launch.py"]),
@@ -98,6 +107,7 @@ def generate_launch_description():
             "fake_sensor_commands": fake_sensor_commands,
             "initial_joint_controller": initial_joint_controller,
             "activate_joint_controller": activate_joint_controller,
+            "headless_mode": headless_mode,
         }.items(),
     )
 
