@@ -18,7 +18,7 @@ add_executable(initial_joint_state_publisher src/initial_joint_state_publisher.c
 ament_target_dependencies(initial_joint_state_publisher rclcpp sensor_msgs)
 
 install(
-  DIRECTORY urdf launch rviz
+  DIRECTORY urdf launch rviz config meshes
   DESTINATION share/${PROJECT_NAME}/
 )
 
