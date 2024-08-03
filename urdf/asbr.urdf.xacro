@@ -4,7 +4,7 @@
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
     <!-- Defining Main parameters -->
-    <xacro:arg name="ur_type" default="ur5e"/>
+    <xacro:arg name="ur_type" default="ur5"/>
     <xacro:arg name="tf_prefix" default=""/>
     <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
     <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
