@@ -38,8 +38,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "runtime_config_package",
-            default_value="ur_robot_driver",
-            description="Package with the controller's configuration in 'config' folder.",
+            default_value="asbr_description",
+            description="Package with the controller's configuration in 'config' folder. The package can be ur_robot_driver but I copied it because I want to include the gripper",
         ),
         DeclareLaunchArgument(
             "controllers_file",
