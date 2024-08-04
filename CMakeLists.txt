@@ -13,12 +13,11 @@ find_package(realsense2_description REQUIRED)
 find_package(xacro REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(ur_robot_driver REQUIRED)
 
-add_executable(initial_joint_state_publisher src/initial_joint_state_publisher.cpp)
-ament_target_dependencies(initial_joint_state_publisher rclcpp sensor_msgs)
 
 install(
-  DIRECTORY urdf launch rviz config meshes
+  DIRECTORY urdf launch rviz config 
   DESTINATION share/${PROJECT_NAME}/
 )
 
