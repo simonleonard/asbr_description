@@ -4,7 +4,7 @@
   <name>asbr_description</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="oafolay2@jh.edu">srobot</maintainer>
+  <maintainer email="oafolay2@jh.edu">Seyi R. Afolayan</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
