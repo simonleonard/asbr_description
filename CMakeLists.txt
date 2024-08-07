@@ -15,6 +15,12 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(ur_robot_driver REQUIRED)
 
+find_package(std_msgs REQUIRED)
+find_package(controller_manager REQUIRED)
+find_package(controller_interface REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(ros2_control REQUIRED)
+
 
 install(
   DIRECTORY urdf launch rviz config 

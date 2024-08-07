@@ -1,0 +1,13 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+gripper_action_controller:
+  ros__parameters:
+    type: gripper_controllers/GripperActionController
+    joints:
+      - robotiq_85_left_knuckle_joint
+    state_interfaces:
+      - position
+    command_interfaces:
+      - position

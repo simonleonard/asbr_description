@@ -15,6 +15,12 @@
   <depend>xacro</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>controller_manager</depend>
+  <depend>controller_interface</depend>
+  <depend>hardware_interface</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
 
   <exec_depend>ur_robot_driver</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>

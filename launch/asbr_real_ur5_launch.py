@@ -4,7 +4,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -70,7 +70,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "use_fake_hardware",
             # Set to false when using real UR5x
-            default_value="true", 
+            default_value="false", 
             description="Start the robot with fake hardware.",
         ),
         DeclareLaunchArgument(
@@ -102,7 +102,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "headless_mode",
             # Set to true if using the real UR5x
-            default_value="false",
+            default_value="true",
             description="Enable headless mode for real robot control.",
         ),
         DeclareLaunchArgument(
@@ -181,6 +181,21 @@ def generate_launch_description():
             default_value="50003",
             description="Port for trajectory control", 
         ),
+        DeclareLaunchArgument(
+            "sim_ignition",
+            default_value="false",
+            description="Simulate with Ignition Gazebo",
+        ),
+        DeclareLaunchArgument(
+            "sim_isaac",
+            default_value="false",
+            description="Simulate with Isaac Sim",
+        ),
+        DeclareLaunchArgument(
+            "com_port",
+            default_value="/dev/ttyUSB0",
+            description="Communication port for the gripper",
+        ),
     ]
 
     # Initializations
@@ -217,6 +232,58 @@ def generate_launch_description():
     reverse_port = LaunchConfiguration("reverse_port")
     script_sender_port = LaunchConfiguration("script_sender_port")
     trajectory_port = LaunchConfiguration("trajectory_port")
+    sim_ignition = LaunchConfiguration("sim_ignition")
+    sim_isaac = LaunchConfiguration("sim_isaac")
+    com_port = LaunchConfiguration("com_port")
+
+    robot_description_content = Command(
+        [
+            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            " ",
+            PathJoinSubstitution([FindPackageShare(description_package), "urdf", description_file]),
+            " ",
+            "safety_limits:=", safety_limits,
+            " ",
+            "safety_pos_margin:=", safety_pos_margin,
+            " ",
+            "safety_k_position:=", safety_k_position,
+            " ",
+            "name:=", "ur",
+            " ",
+            "ur_type:=", ur_type,
+            " ",
+            "tf_prefix:=", tf_prefix,
+            " ",
+            "sim_ignition:=", sim_ignition,
+            " ",
+            "sim_isaac:=", sim_isaac,
+            " ",
+            "use_fake_hardware:=", use_fake_hardware,
+            " ",
+            "fake_sensor_commands:=", fake_sensor_commands,
+            " ",
+            "com_port:=", com_port,
+        ]
+    )
+    robot_description = {"robot_description": robot_description_content}
+
+    # Nodes
+    joint_state_publisher_node = Node(
+        package="joint_state_publisher_gui",
+        executable="joint_state_publisher_gui",
+    )
+    robot_state_publisher_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[{"use_sim_time": True}, robot_description],
+    )
+    gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    )
 
     # Base Launch 
     base_launch = IncludeLaunchDescription(
@@ -271,7 +338,10 @@ def generate_launch_description():
     )
 
     nodes_to_start = [
-        rviz_node
+        rviz_node,
+        # joint_state_publisher_node,
+        robot_state_publisher_node,
+        #gripper_controller_spawner,
     ]
 
     return LaunchDescription(declared_arguments + [base_launch] + nodes_to_start)

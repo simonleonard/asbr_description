@@ -1,141 +1,15 @@
 <?xml version="1.0"?>
 <robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:arg name="name" default="ur5e_robot"/>
-    <!-- Include the URDF for the UR robot -->
-    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
-    <!-- Defining Main parameters -->
-    <xacro:arg name="ur_type" default="ur5"/>
-    <xacro:arg name="tf_prefix" default=""/>
-    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
-    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
-    <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
-    <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
-    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
-    <xacro:arg name="safety_limits" default="true"/> <!-- I set this to true cause it makes sense to do so -->
-    <xacro:arg name="safety_pos_margin" default="0.15"/>
-    <xacro:arg name="safety_k_position" default="20"/>
+    <!-- Include the arm (UR5 or UR5e -->
+     <xacro:include filename="arm.urdf.xacro"/>
 
-    <!-- Simulation and Control Parameters -->
-    <xacro:arg name="use_fake_hardware" default="false"/> <!-- Using the real UR5 or UR5e--> 
-    <xacro:arg name="fake_sensor_commands" default="false"/>
-    <xacro:arg name="sim_gazebo" default="false"/>
-    <xacro:arg name="sim_ignition" default="false"/>
-    <xacro:arg name="sim_isaac" default="false"/>
-    <xacro:arg name="headless_mode" default="true"/> <!-- Setting the headless mode to true for real robot-->
-    <xacro:arg name="robot_ip" default="172.22.22.2"/> <!-- Current robot_ip on the UR5-->
-    <xacro:arg name="script_filename" default=""/>
-    <xacro:arg name="output_recipe_filename" default=""/>
-    <xacro:arg name="input_recipe_filename" default=""/>
-    <xacro:arg name="reverse_ip" default="172.22.22.10"/> <!-- I think this is the other ip ad which is for my laptop 172.22.22.10-->
-    <xacro:arg name="script_command_port" default="50004"/>
-    <xacro:arg name="reverse_port" default="50001"/> 
-    <xacro:arg name="script_sender_port" default="50002"/>
-    <xacro:arg name="trajectory_port" default="50003"/>
-
-    <!-- Tool Communication Related Parameters-->
-    <xacro:arg name="use_tool_communication" default="false"/>
-    <xacro:arg name="tool_voltage" default="0"/>
-    <xacro:arg name="tool_parity" default="0"/>
-    <xacro:arg name="tool_baud_rate" default="115200"/>
-    <xacro:arg name="tool_stop_bits" default="1"/>
-    <xacro:arg name="tool_rx_idle_chars" default="1.5"/>
-    <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
-    <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
-    <xacro:arg name="tool_tcp_port" default="54321"/>
-    <xacro:arg name="com_port" default="/dev/ttyUSB0"/> <!-- Change this based on what your ports say (lsusb)-->
-    <xacro:arg name="include_ros2_control" default="true"/>
-    <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
-    <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
-    
-    <!-- Create link fixed to the world -->
-    <link name="world" />
-
-    <!-- Instantiate the UR robot macro -->
-    <xacro:ur_robot
-        name="$(arg name)"
-        tf_prefix="$(arg tf_prefix)"
-        parent="world"
-        joint_limits_parameters_file="$(arg joint_limit_params)"
-        kinematics_parameters_file="$(arg kinematics_params)"
-        physical_parameters_file="$(arg physical_params)"
-        visual_parameters_file="$(arg visual_params)"
-        transmission_hw_interface="$(arg transmission_hw_interface)"
-        safety_limits="$(arg safety_limits)"
-        safety_pos_margin="$(arg safety_pos_margin)"
-        safety_k_position="$(arg safety_k_position)"
-        use_fake_hardware="$(arg use_fake_hardware)"
-        fake_sensor_commands="$(arg fake_sensor_commands)"
-        sim_gazebo="$(arg sim_gazebo)"
-        sim_ignition="$(arg sim_ignition)"
-        headless_mode="$(arg headless_mode)"
-        initial_positions="${xacro.load_yaml(initial_positions_file)}"
-        use_tool_communication="$(arg use_tool_communication)"
-        tool_voltage="$(arg tool_voltage)"
-        tool_parity="$(arg tool_parity)"
-        tool_baud_rate="$(arg tool_baud_rate)"
-        tool_stop_bits="$(arg tool_stop_bits)"
-        tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
-        tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
-        tool_device_name="$(arg tool_device_name)"
-        tool_tcp_port="$(arg tool_tcp_port)"
-        robot_ip="$(arg robot_ip)"
-        script_filename="$(arg script_filename)"
-        output_recipe_filename="$(arg output_recipe_filename)"
-        input_recipe_filename="$(arg input_recipe_filename)"
-        reverse_ip="$(arg reverse_ip)"
-        script_command_port="$(arg script_command_port)"
-        reverse_port="$(arg reverse_port)"
-        script_sender_port="$(arg script_sender_port)"
-        trajectory_port="$(arg trajectory_port)">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-    </xacro:ur_robot>
-
-    Including the description for the gripper and adapter macro
-    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
-    <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
-
-    <!-- Instantiating the gripper macro and the adapter macro-->
-    <xacro:ur_to_robotiq prefix="" connected_to="tool0"/> <!-- This is the adapter-->
-    <!-- Attach the ur_to_robotiq_link (last link in the adapter urdf) to the gripper urdf-->
-    <xacro:robotiq_gripper 
-        name="ur5e_gripper" 
-        prefix="" 
-        parent="gripper_mount_link" 
-        sim_ignition="$(arg sim_ignition)"
-        sim_isaac="$(arg sim_isaac)"
-        use_fake_hardware="$(arg use_fake_hardware)"
-        fake_sensor_commands="$(arg fake_sensor_commands)"
-        com_port="$(arg com_port)"
-        >
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-    </xacro:robotiq_gripper>
+    <!-- Adding the gripper + adapter-->
+    <xacro:include filename="gripper.urdf.xacro"/>
 
     <!-- Adding the camera --> 
     <xacro:include filename="camera.xacro"/>
 
     <!-- *************Gazebo classic and Ignition gazebo if ever needed*********** -->
-    <xacro:if value="$(arg sim_gazebo)">
-        <!-- Gazebo plugins -->
-        <gazebo reference="world">
-        </gazebo>
-        <gazebo>
-            <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-                <parameters>$(arg simulation_controllers)</parameters>
-            </plugin>
-        </gazebo>
-    </xacro:if>
-
-    <xacro:if value="$(arg sim_ignition)">
-        <!-- Gazebo plugins -->
-        <gazebo reference="world">
-        </gazebo>
-        <gazebo>
-            <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-                <parameters>$(arg simulation_controllers)</parameters>
-                <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
-            </plugin>
-        </gazebo>
-    </xacro:if>
-
+    <xacro:include filename="gazebo.xacro"/>
 </robot>
  
