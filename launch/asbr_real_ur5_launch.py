@@ -325,6 +325,13 @@ def generate_launch_description():
         }.items(),
     )
 
+    gripper_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([FindPackageShare("robotiq_description"), "/launch/asbr_gripper.launch.py"]),
+        launch_arguments={
+            "com_port": com_port,
+        }.items(),
+    )
+
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz", "ur5e.rviz"]
     )
@@ -344,4 +351,4 @@ def generate_launch_description():
         #gripper_controller_spawner,
     ]
 
-    return LaunchDescription(declared_arguments + [base_launch] + nodes_to_start)
+    return LaunchDescription(declared_arguments + [base_launch, gripper_launch] + nodes_to_start)
