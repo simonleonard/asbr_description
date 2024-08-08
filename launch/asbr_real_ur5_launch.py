@@ -325,36 +325,37 @@ def generate_launch_description():
     )
     
     # Nodes
-    robot_state_publisher_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        output="both",
-        parameters=[{"use_sim_time": True}, robot_description],
-    )
+    # robot_state_publisher_node = Node(
+    #     package="robot_state_publisher",
+    #     executable="robot_state_publisher",
+    #     output="both",
+    #     parameters=[{"use_sim_time": True}, robot_description],
+    # )
 
-    # Joint State Broadcaster Node 
-    joint_state_broadcaster_state_node = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster"],
-        output="screen",
-    )
+    # Joint State Broadcaster Node -- Pretty much done by the control launch file.
+    # joint_state_broadcaster_state_node = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["joint_state_broadcaster"],
+    #     output="screen",
+    # )
 
-    # Joint Trajectory Controller Spawner Node 
-    joint_trajectory_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["scaled_joint_trajectory_controller"],
-        output="screen",
-    )
+    # # Joint Trajectory Controller Spawner Node -- Pretty much done by the control launch file.
+    # joint_trajectory_controller_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["scaled_joint_trajectory_controller"],
+    #     output="screen",
+    # )
 
     # Gripper Control Node 
-    gripper_controller_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_description, PathJoinSubstitution([FindPackageShare("robotiq_description"), "config", gripper_controllers_file])],
-        output="both",
-    )
+    # gripper_controller_node = Node(
+    #     package="controller_manager",
+    #     executable="ros2_control_node",
+    #     #name="robotiq_controller_manager", # Starts another controller manager with a different description.
+    #     parameters=[robot_description, PathJoinSubstitution([FindPackageShare("robotiq_description"), "config", gripper_controllers_file])],
+    #     output="both",
+    # )
 
     # Robotiq Gripper Spawner 
     robotiq_gripper_controller_spawner = Node(
@@ -383,12 +384,9 @@ def generate_launch_description():
 
     nodes_to_start = [
         rviz_node,
-        robot_state_publisher_node,
-        #joint_state_broadcaster_state_node,
-        joint_trajectory_controller_spawner,
         #gripper_controller_node,
-        #robotiq_gripper_controller_spawner,
-        #robotiq_activation_controller_spawner,
+        robotiq_gripper_controller_spawner,
+        robotiq_activation_controller_spawner,
     ]
 
     return LaunchDescription(declared_arguments + [base_launch] + nodes_to_start)
