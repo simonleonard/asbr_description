@@ -70,12 +70,12 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "use_fake_hardware",
             # Set to false when using real UR5x
-            default_value="false", 
+            default_value="true", 
             description="Start the robot with fake hardware.",
         ),
         DeclareLaunchArgument(
             "fake_sensor_commands", 
-            default_value="false",
+            default_value="true",
             description="Enable fake command interfaces for sensors used for simple simulations.",
         ),
         DeclareLaunchArgument(
@@ -102,7 +102,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "headless_mode",
             # Set to true if using the real UR5x
-            default_value="true",
+            default_value="false",
             description="Enable headless mode for real robot control.",
         ),
         DeclareLaunchArgument(
@@ -192,6 +192,11 @@ def generate_launch_description():
             description="Simulate with Isaac Sim",
         ),
         DeclareLaunchArgument(
+            "gripper_controllers_file",
+            default_value="robotiq_controllers.yaml",
+            description="YAML file wiht the controller's configuration",
+        ),
+        DeclareLaunchArgument(
             "com_port",
             default_value="/dev/ttyUSB0",
             description="Communication port for the gripper",
@@ -234,9 +239,11 @@ def generate_launch_description():
     trajectory_port = LaunchConfiguration("trajectory_port")
     sim_ignition = LaunchConfiguration("sim_ignition")
     sim_isaac = LaunchConfiguration("sim_isaac")
+    gripper_controllers_file = LaunchConfiguration("gripper_controllers_file")
     com_port = LaunchConfiguration("com_port")
 
-    robot_description_content = Command(
+        # Combine the robot and gripper description commands into one
+    combined_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
@@ -262,28 +269,16 @@ def generate_launch_description():
             " ",
             "fake_sensor_commands:=", fake_sensor_commands,
             " ",
+            "prefix:=", "",
+            " ",
+            "include_ros2_control:=", "true",
+            " ",
             "com_port:=", com_port,
         ]
     )
-    robot_description = {"robot_description": robot_description_content}
 
-    # Nodes
-    joint_state_publisher_node = Node(
-        package="joint_state_publisher_gui",
-        executable="joint_state_publisher_gui",
-    )
-    robot_state_publisher_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        output="both",
-        parameters=[{"use_sim_time": True}, robot_description],
-    )
-    gripper_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["gripper_controller", "--controller-manager", "/controller_manager"],
-        output="screen",
-    )
+        # Create the combined robot description
+    robot_description = {"robot_description": combined_description_content}
 
     # Base Launch 
     base_launch = IncludeLaunchDescription(
@@ -325,17 +320,59 @@ def generate_launch_description():
         }.items(),
     )
 
-    gripper_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([FindPackageShare("robotiq_description"), "/launch/asbr_gripper.launch.py"]),
-        launch_arguments={
-            "com_port": com_port,
-        }.items(),
-    )
-
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz", "ur5e.rviz"]
     )
+    
+    # Nodes
+    robot_state_publisher_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[{"use_sim_time": True}, robot_description],
+    )
 
+    # Joint State Broadcaster Node 
+    joint_state_broadcaster_state_node = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster"],
+        output="screen",
+    )
+
+    # Joint Trajectory Controller Spawner Node 
+    joint_trajectory_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["scaled_joint_trajectory_controller"],
+        output="screen",
+    )
+
+    # Gripper Control Node 
+    gripper_controller_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description, PathJoinSubstitution([FindPackageShare("robotiq_description"), "config", gripper_controllers_file])],
+        output="both",
+    )
+
+    # Robotiq Gripper Spawner 
+    robotiq_gripper_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["robotiq_gripper_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    )
+
+    # Robotiq Activation Spawner 
+    robotiq_activation_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["robotiq_activation_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    )
+
+    # RViz Node
     rviz_node = Node(
         package="rviz2",
         executable="rviz2",
@@ -346,9 +383,12 @@ def generate_launch_description():
 
     nodes_to_start = [
         rviz_node,
-        # joint_state_publisher_node,
         robot_state_publisher_node,
-        #gripper_controller_spawner,
+        #joint_state_broadcaster_state_node,
+        joint_trajectory_controller_spawner,
+        #gripper_controller_node,
+        #robotiq_gripper_controller_spawner,
+        #robotiq_activation_controller_spawner,
     ]
 
-    return LaunchDescription(declared_arguments + [base_launch, gripper_launch] + nodes_to_start)
+    return LaunchDescription(declared_arguments + [base_launch] + nodes_to_start)
