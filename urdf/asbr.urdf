@@ -569,13 +569,13 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://robotiq_description/meshes/visual/ur_to_robotiq_adapter.dae"/>
+        <mesh filename="package://robotiq_description/meshes/visual/2f_85/ur_to_robotiq_adapter.dae"/>
       </geometry>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://robotiq_description/meshes/collision/ur_to_robotiq_adapter.stl"/>
+        <mesh filename="package://robotiq_description/meshes/collision/2f_85/ur_to_robotiq_adapter.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -591,9 +591,12 @@
     <origin rpy="0 0 0" xyz="0 0 0.011"/>
   </joint>
   <link name="gripper_mount_link"/>
+  <!-- This is the adapter -->
   <ros2_control name="ur5e_gripper" type="system">
     <!-- Plugins -->
     <hardware>
+      <!-- Set use_dummy to true to connect to a dummy driver for testing purposes. -->
+      <param name="use_dummy">false</param>
       <plugin>robotiq_driver/RobotiqGripperHardwareInterface</plugin>
       <param name="gripper_closed_position">0.7929</param>
       <param name="COM_port">/dev/ttyUSB0</param>
@@ -617,12 +620,12 @@
   <link name="robotiq_85_base_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/robotiq_base.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/robotiq_base.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/robotiq_base.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/robotiq_base.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -634,12 +637,12 @@
   <link name="robotiq_85_left_knuckle_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/left_knuckle.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/left_knuckle.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/left_knuckle.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/left_knuckle.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -651,12 +654,12 @@
   <link name="robotiq_85_right_knuckle_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/right_knuckle.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/right_knuckle.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/right_knuckle.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/right_knuckle.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -668,12 +671,12 @@
   <link name="robotiq_85_left_finger_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/left_finger.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/left_finger.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/left_finger.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/left_finger.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -685,12 +688,12 @@
   <link name="robotiq_85_right_finger_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/right_finger.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/right_finger.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/right_finger.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/right_finger.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -702,12 +705,12 @@
   <link name="robotiq_85_left_inner_knuckle_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/left_inner_knuckle.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/left_inner_knuckle.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/left_inner_knuckle.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/left_inner_knuckle.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -719,12 +722,12 @@
   <link name="robotiq_85_right_inner_knuckle_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/right_inner_knuckle.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/right_inner_knuckle.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/right_inner_knuckle.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/right_inner_knuckle.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -736,12 +739,12 @@
   <link name="robotiq_85_left_finger_tip_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/left_finger_tip.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/left_finger_tip.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/left_finger_tip.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/left_finger_tip.stl"/>
       </geometry>
       <surface>
         <friction>
@@ -771,12 +774,12 @@
   <link name="robotiq_85_right_finger_tip_link">
     <visual>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/visual/right_finger_tip.dae"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/visual/2f_85/right_finger_tip.dae"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="file:///opt/ros/humble/share/robotiq_description/meshes/collision/right_finger_tip.stl"/>
+        <mesh filename="file:///home/r9/asbr_ws/install/robotiq_description/share/robotiq_description/meshes/collision/2f_85/right_finger_tip.stl"/>
       </geometry>
       <surface>
         <friction>

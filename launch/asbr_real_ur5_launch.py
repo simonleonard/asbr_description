@@ -75,7 +75,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "fake_sensor_commands", 
-            default_value="true",
+            default_value="false",
             description="Enable fake command interfaces for sensors used for simple simulations.",
         ),
         DeclareLaunchArgument(

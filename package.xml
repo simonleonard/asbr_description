@@ -9,8 +9,8 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>ur_description</depend>
   <depend>robotiq_description</depend>
+  <depend>ur_description</depend>
   <depend>realsense2_description</depend>
   <depend>xacro</depend>
   <depend>rclcpp</depend>
@@ -21,7 +21,7 @@
   <depend>hardware_interface</depend>
   <depend>ros2_control</depend>
   <depend>ros2_controllers</depend>
-
+  
   <exec_depend>ur_robot_driver</exec_depend>
   <exec_depend>gripper_controllers</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
