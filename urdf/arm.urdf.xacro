@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <robot name="ur5e_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:arg name="name" default="ur5e_robot"/>
+  
+    <xacro:arg name="name" default="asbr"/>
     <!-- Include the URDF for the UR robot -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
     <!-- Defining Main parameters -->
-    <xacro:arg name="ur_type" default="ur5"/>
+    <xacro:arg name="ur_type" default="ur5e"/>
     <xacro:arg name="tf_prefix" default=""/>
     <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
     <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
@@ -19,7 +20,7 @@
     <xacro:arg name="use_fake_hardware" default="false"/> <!-- Using the real UR5 or UR5e--> 
     <xacro:arg name="fake_sensor_commands" default="false"/>
     <xacro:arg name="sim_gazebo" default="false"/>
-    <xacro:arg name="sim_ignition" default="false"/>
+    <xacro:arg name="sim_ignition" default="true"/>
     <xacro:arg name="sim_isaac" default="false"/>
     <xacro:arg name="headless_mode" default="true"/> <!-- Setting the headless mode to true for real robot-->
     <xacro:arg name="robot_ip" default="172.22.22.2"/> <!-- Current robot_ip on the UR5-->

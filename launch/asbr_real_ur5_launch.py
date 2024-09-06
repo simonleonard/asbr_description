@@ -13,7 +13,7 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument(
             "ur_type",
-            default_value="ur5", 
+            default_value="ur5e", 
             description="Type/Series of used Robot",
         ),
         DeclareLaunchArgument(
@@ -242,7 +242,7 @@ def generate_launch_description():
     gripper_controllers_file = LaunchConfiguration("gripper_controllers_file")
     com_port = LaunchConfiguration("com_port")
 
-        # Combine the robot and gripper description commands into one
+    # Combine the robot and gripper description commands into one
     combined_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
