@@ -24,42 +24,36 @@
         <sensor type="camera" name="camera">
             <update_rate> 30.0 </update_rate>
             <topic> image_raw </topic>
-        <pose> 0 0 0   0 -1.5708 1.5708 </pose>
+            <pose> 0 0 0   0 -1.5708 1.5708 </pose>
             <camera name="head">
               <image>
-                <width> 1920 </width>
-                <height> 1080 </height>
+                <width> 1280 </width>
+                <height> 720 </height>
                 <format>R8G8B8</format>
               </image>
               <clip>
                 <near> 0.02 </near>
-                <far> 3 </far>
+                <far> 5 </far>
               </clip>
               <noise>
                 <mean> 0.0 </mean>
                 <stddev> 0.01 </stddev>
               </noise>
-          <lens>
-            <type> gnomolical </type>
-            <intrinsics>
-                  <fx>1663</fx>
-                  <fy>1663</fy>
-                  <cx>960</cx>
-                  <cy>540</cy>
+              <lens>
+		<type> gnomolical </type>
+		<intrinsics>
+                  <fx>912.1078491210938</fx>
+                  <fy>911.9324340820312</fy>
+                  <cx>641.4862670898438</cx>
+                  <cy>354.6959228515625</cy>
                   <s>0</s>	      
-            </intrinsics>
-            <projection>
-                  <p_fx>1663</p_fx>
-                  <p_fy>1663</p_fy>
-                  <p_cx>960</p_cx>
-                  <p_cy>540</p_cy>
-            </projection>
-          </lens>
+		</intrinsics>
+              </lens>
             </camera>
             <plugin filename="ignition-gazebo-sensors-system"
                     name="ignition::gazebo::systems::Sensors">
             </plugin>
-          </sensor>
+        </sensor>
     </gazebo>
 
 </robot>
