@@ -23,7 +23,7 @@ find_package(ros2_control REQUIRED)
 
 
 install(
-  DIRECTORY urdf launch rviz config 
+  DIRECTORY urdf launch rviz config
   DESTINATION share/${PROJECT_NAME}/
 )
 

@@ -50,7 +50,7 @@
   <xacro:arg name="simulation_controllers" default="" />
   
   <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
-  <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
+  <xacro:arg name="initial_positions_file" default="$(find asbr_description)/config/initial_positions.yaml"/>
 
   <xacro:arg name="com_port" default="/dev/ttyUSB0"/> <!-- Change this based on what your ports say (lsusb)-->
 
@@ -100,6 +100,14 @@
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:ur_robot>
 
+  <link name="gripper_pick"/>
+  <joint name="gripper_pick_joint" type="fixed">
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0.175" rpy="0 -1.5707963267948970 0"/>
+    <parent link="wrist_3_link"/>
+    <child link="gripper_pick"/>
+  </joint>
+  
   <!-- Include the macro definitions -->
   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
   <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
