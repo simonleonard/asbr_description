@@ -117,7 +117,7 @@
   <!-- Instantiating the gripper macro-->
   <xacro:robotiq_gripper 
       name="gripper" 
-      prefix="robotiq" 
+      prefix=""
       parent="gripper_mount_link" 
       sim_ignition="true"
       sim_isaac="false"
