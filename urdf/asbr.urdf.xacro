@@ -103,7 +103,7 @@
   <link name="gripper_pick"/>
   <joint name="gripper_pick_joint" type="fixed">
     <axis xyz="0 0 1"/>
-    <origin xyz="0 0 0.175" rpy="0 -1.5707963267948970 0"/>
+    <origin xyz="0 0 0.175" rpy="0 0 0"/>
     <parent link="wrist_3_link"/>
     <child link="gripper_pick"/>
   </joint>
