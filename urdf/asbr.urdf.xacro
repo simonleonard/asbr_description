@@ -119,14 +119,14 @@
       name="gripper" 
       prefix=""
       parent="gripper_mount_link" 
-      sim_ignition="$(arg sim_ignition)"
+      sim_ignition="true"
       sim_isaac="false"
-      use_fake_hardware="true"
+      use_fake_hardware="$(arg use_fake_hardware)"
       com_port="$(arg com_port)"
       >
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:robotiq_gripper>
-
+  
   <!-- Including the description for the realsense2 camera -->
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
   <!-- Connecting the camera sensor to the camera link -->
