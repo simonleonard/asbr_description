@@ -300,7 +300,7 @@ def generate_launch_description():
         )
 
     controllers_active = [
-        "ur_joint_state_broadcaster",
+        "ur5e_joint_state_broadcaster",
         "robotiq_joint_state_broadcaster",
         "ur5e_controller",
         "robotiq_controller"

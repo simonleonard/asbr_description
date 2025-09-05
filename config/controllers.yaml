@@ -2,7 +2,7 @@ controller_manager:
   ros__parameters:
     update_rate: 500  # Hz
 
-    ur_joint_state_broadcaster:
+    ur5e_joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
     robotiq_joint_state_broadcaster:
@@ -35,7 +35,7 @@ controller_manager:
     robotiq_activation_controller:
       type: robotiq_controllers/RobotiqActivationController
 
-ur_joint_state_broadcaster:
+ur5e_joint_state_broadcaster:
   ros__parameters:
     default: true
     joints:
