@@ -17,7 +17,7 @@ controller_manager:
     force_torque_sensor_broadcaster:
       type: force_torque_sensor_broadcaster/ForceTorqueSensorBroadcaster
 
-    UR5e:
+    ur5e_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
     scaled_joint_trajectory_controller:
@@ -29,7 +29,7 @@ controller_manager:
     forward_position_controller:
       type: position_controllers/JointGroupPositionController
     
-    robotiq_gripper_controller:
+    robotiq_controller:
       type: position_controllers/GripperActionController
 
     robotiq_activation_controller:
@@ -49,7 +49,7 @@ ur_joint_state_broadcaster:
       - position
       - velocity
 
-UR5e:
+ur5e_controller:
   ros__parameters:
     joints:
       - shoulder_pan_joint
@@ -84,7 +84,7 @@ robotiq_joint_state_broadcaster:
     interfaces:
       - position
 
-robotiq_gripper_controller:
+robotiq_controller:
   ros__parameters:
     default: true
     joint: robotiq_85_left_knuckle_joint

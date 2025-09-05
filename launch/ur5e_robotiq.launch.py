@@ -2,11 +2,12 @@
 # Credits: Adapted from Dennis Stogl 
  
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch_ros.parameter_descriptions import ParameterFile
 
 def generate_launch_description():
     # Declarations
@@ -43,7 +44,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controllers_file",
-            default_value="ur_controllers.yaml",
+            default_value="controllers.yaml",
             description="YAML file with the conroller's configuration.",
         ),
         DeclareLaunchArgument(
@@ -58,9 +59,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "kinematics_params_file",
-            default_value=PathJoinSubstitution([FindPackageShare("asbr_description"), "config", "ur5", "default_kinematics.yaml"]),
+            default_value=PathJoinSubstitution([FindPackageShare("ur_description"), "config", "ur5", "default_kinematics.yaml"]),
             description="The calibration configuration of the actual robot used.", 
-            # I might need to run the calibration code recommended on the ur_robot_driver page.
         ),
         DeclareLaunchArgument(
             "tf_prefix",
@@ -69,7 +69,6 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "use_fake_hardware",
-            # Set to false when using real UR5x
             default_value="true", 
             description="Start the robot with fake hardware.",
         ),
@@ -80,29 +79,17 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "controller_spawner_timeout", 
-            default_value="10",
+            default_value="60",
             description="Timeout used when spawning controllers.",
         ),
         DeclareLaunchArgument(
-            "initial_joint_controller",
-            default_value="scaled_joint_trajectory_controller",
-            description="Initially loaded robot controller",
-        ),
-        DeclareLaunchArgument(
-            "activate_joint_controller",
-            default_value="true",
-            description="Activate loaded joint controller.",
-        ),
-        DeclareLaunchArgument(
             "launch_rviz",
-            # Set to true if not using a rviz file.
-            default_value="false",
+            default_value="true",
             description="Launch RViz?",
         ),
         DeclareLaunchArgument(
             "headless_mode",
-            # Set to true if using the real UR5x
-            default_value="false",
+            default_value="true",
             description="Enable headless mode for real robot control.",
         ),
         DeclareLaunchArgument(
@@ -156,7 +143,6 @@ def generate_launch_description():
             description="Tool voltage that will be setup.",
         ),
         DeclareLaunchArgument(
-            # This is the IP of your device, PC or laptop.
             "reverse_ip",
             default_value="172.22.22.10",
             description="IP for the robot controller to communicate back to the driver.",
@@ -192,11 +178,6 @@ def generate_launch_description():
             description="Simulate with Isaac Sim",
         ),
         DeclareLaunchArgument(
-            "gripper_controllers_file",
-            default_value="robotiq_controllers.yaml",
-            description="YAML file wiht the controller's configuration",
-        ),
-        DeclareLaunchArgument(
             "com_port",
             default_value="/dev/ttyUSB0",
             description="Communication port for the gripper",
@@ -218,8 +199,6 @@ def generate_launch_description():
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
     controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
-    initial_joint_controller = LaunchConfiguration("initial_joint_controller")
-    activate_joint_controller = LaunchConfiguration("activate_joint_controller")
     launch_rviz = LaunchConfiguration("launch_rviz")
     headless_mode = LaunchConfiguration("headless_mode")
     launch_dashboard_client = LaunchConfiguration("launch_dashboard_client")
@@ -239,7 +218,6 @@ def generate_launch_description():
     trajectory_port = LaunchConfiguration("trajectory_port")
     sim_ignition = LaunchConfiguration("sim_ignition")
     sim_isaac = LaunchConfiguration("sim_isaac")
-    gripper_controllers_file = LaunchConfiguration("gripper_controllers_file")
     com_port = LaunchConfiguration("com_port")
 
     # Combine the robot and gripper description commands into one
@@ -277,116 +255,86 @@ def generate_launch_description():
         ]
     )
 
-        # Create the combined robot description
+    # Create the combined robot description
     robot_description = {"robot_description": combined_description_content}
-
-    # Base Launch 
-    base_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([FindPackageShare("ur_robot_driver"), "/launch/ur_control.launch.py"]),
-        launch_arguments={
-            "ur_type": ur_type, 
-            "robot_ip": robot_ip,
-            "safety_limits": safety_limits,
-            "safety_pos_margin": safety_pos_margin,
-            "safety_k_position": safety_k_position,
-            "runtime_config_package": runtime_config_package,
-            "controllers_file": controllers_file,
-            "description_package": description_package,
-            "description_file": description_file,
-            "kinematics_params_file": kinematics_params_file,
-            "tf_prefix": tf_prefix,
-            "use_fake_hardware": use_fake_hardware,
-            "fake_sensor_commands": fake_sensor_commands,
-            "controller_spawner_timeout": controller_spawner_timeout,
-            "initial_joint_controller": initial_joint_controller,
-            "activate_joint_controller": activate_joint_controller,
-            "headless_mode": headless_mode,
-            "launch_rviz": launch_rviz,
-            "launch_dashboard_client": launch_dashboard_client,
-            "use_tool_communication": use_tool_communication,
-            "tool_parity": tool_parity,
-            "tool_baud_rate": tool_baud_rate,
-            "tool_stop_bits": tool_stop_bits,
-            "tool_rx_idle_chars": tool_rx_idle_chars, 
-            "tool_tx_idle_chars": tool_tx_idle_chars, 
-            "tool_device_name": tool_device_name,
-            "tool_tcp_port": tool_tcp_port,
-            "tool_voltage" : tool_voltage,
-            "reverse_ip": reverse_ip,
-            "script_command_port": script_command_port,
-            "reverse_port": reverse_port,
-            "script_sender_port": script_sender_port,
-            "trajectory_port": trajectory_port,
-        }.items(),
-    )
 
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(description_package), "rviz", "ur5e.rviz"]
     )
-    
-    # Nodes
-    # robot_state_publisher_node = Node(
-    #     package="robot_state_publisher",
-    #     executable="robot_state_publisher",
-    #     output="both",
-    #     parameters=[{"use_sim_time": True}, robot_description],
-    # )
 
-    # Joint State Broadcaster Node -- Pretty much done by the control launch file.
-    # joint_state_broadcaster_state_node = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["joint_state_broadcaster"],
-    #     output="screen",
-    # )
-
-    # # Joint Trajectory Controller Spawner Node -- Pretty much done by the control launch file.
-    # joint_trajectory_controller_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["scaled_joint_trajectory_controller"],
-    #     output="screen",
-    # )
-
-    # Gripper Control Node 
-    # gripper_controller_node = Node(
-    #     package="controller_manager",
-    #     executable="ros2_control_node",
-    #     #name="robotiq_controller_manager", # Starts another controller manager with a different description.
-    #     parameters=[robot_description, PathJoinSubstitution([FindPackageShare("robotiq_description"), "config", gripper_controllers_file])],
-    #     output="both",
-    # )
-
-    # Robotiq Gripper Spawner 
-    robotiq_gripper_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["robotiq_gripper_controller", "--controller-manager", "/controller_manager"],
-        output="screen",
+    controllers_file = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "config", "controllers.yaml"]
     )
 
-    # Robotiq Activation Spawner 
-    robotiq_activation_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["robotiq_activation_controller", "--controller-manager", "/controller_manager"],
-        output="screen",
+    # Boiler plate
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[{"use_sim_time": True}, robot_description],
     )
 
-    # RViz Node
-    rviz_node = Node(
+    rviz = Node(
         package="rviz2",
         executable="rviz2",
         name="rviz2",
         output="log",
         arguments=["-d", rviz_config_file],
+        condition=IfCondition(launch_rviz),
+    )
+
+    # Controllers
+    def controller_spawner(controllers, active=True):
+        inactive_flags = ["--inactive"] if not active else []
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=[
+                "--controller-manager",
+                "/controller_manager",
+                "--controller-manager-timeout",
+                controller_spawner_timeout,
+            ]
+            + inactive_flags
+            + controllers,
+        )
+
+    controllers_active = [
+        "ur_joint_state_broadcaster",
+        "robotiq_joint_state_broadcaster",
+        "ur5e_controller",
+        "robotiq_controller"
+    ]
+    
+    controllers_inactive = [
+        "io_and_status_controller",
+        "speed_scaling_state_broadcaster",
+        "force_torque_sensor_broadcaster",
+        "scaled_joint_trajectory_controller",
+        "forward_velocity_controller",
+        "forward_position_controller",
+        #"robotiq_activation_controller"
+    ]
+
+    controller_spawners = [
+        controller_spawner(controllers_active)] + [
+        controller_spawner(controllers_inactive, active=False)
+    ]
+
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[
+            robot_description,
+            ParameterFile(controllers_file, allow_substs=True),
+        ],
+        output="screen",
     )
 
     nodes_to_start = [
-        rviz_node,
-        #gripper_controller_node,
-        robotiq_gripper_controller_spawner,
-        robotiq_activation_controller_spawner,
-    ]
+        robot_state_publisher,
+        rviz,
+        controller_manager
+    ] + controller_spawners
 
-    return LaunchDescription(declared_arguments + [base_launch] + nodes_to_start)
+    return LaunchDescription(declared_arguments +  nodes_to_start)
