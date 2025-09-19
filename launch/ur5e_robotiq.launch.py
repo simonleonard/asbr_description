@@ -1,10 +1,9 @@
-# Developer: Seyi R. Afolayan 
-# Credits: Adapted from Dennis Stogl 
- 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterFile
@@ -220,6 +219,15 @@ def generate_launch_description():
     sim_isaac = LaunchConfiguration("sim_isaac")
     com_port = LaunchConfiguration("com_port")
 
+    # get these out of the way
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare(description_package), "rviz", "ur5e.rviz"]
+    )
+
+    controllers_file = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "config", "controllers.yaml"]
+    )
+
     # Combine the robot and gripper description commands into one
     combined_description_content = Command(
         [
@@ -252,19 +260,13 @@ def generate_launch_description():
             "include_ros2_control:=", "true",
             " ",
             "com_port:=", com_port,
+            " ",
+            "simulation_controllers:=", controllers_file
         ]
     )
 
     # Create the combined robot description
     robot_description = {"robot_description": combined_description_content}
-
-    rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), "rviz", "ur5e.rviz"]
-    )
-
-    controllers_file = PathJoinSubstitution(
-        [FindPackageShare(runtime_config_package), "config", "controllers.yaml"]
-    )
 
     # Boiler plate
     robot_state_publisher = Node(
@@ -281,6 +283,33 @@ def generate_launch_description():
         output="log",
         arguments=["-d", rviz_config_file],
         condition=IfCondition(launch_rviz),
+    )
+
+    world_file = PathJoinSubstitution(
+        [FindPackageShare(runtime_config_package), "worlds", "empty.sdf"]
+    )
+
+    ignition_launch_description = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
+        ),
+        launch_arguments={"gz_args": [" -r -s -v 3 ", world_file]}.items(),
+        condition=IfCondition(sim_ignition)
+    )
+
+    ignition_spawn_robot = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        arguments=[
+            "-string",
+            combined_description_content,
+            "-name",
+            "ur",
+            "-allow_renaming",
+            "true",
+        ],
+        condition=IfCondition(sim_ignition)
     )
 
     # Controllers
@@ -329,12 +358,15 @@ def generate_launch_description():
             ParameterFile(controllers_file, allow_substs=True),
         ],
         output="screen",
+        condition=UnlessCondition(sim_ignition)
     )
 
     nodes_to_start = [
         robot_state_publisher,
         rviz,
-        controller_manager
+        controller_manager,
+        ignition_launch_description,
+        ignition_spawn_robot,
     ] + controller_spawners
 
     return LaunchDescription(declared_arguments +  nodes_to_start)
