@@ -120,7 +120,7 @@
       parent="gripper_mount_link" 
       sim_ignition="$(arg sim_ignition)"
       sim_isaac="false"
-      use_fake_hardware="$(arg use_fake_hardware)"
+      use_fake_hardware="true"
       com_port="$(arg com_port)"
       >
     <origin xyz="0 0 0" rpy="0 0 0"/>
