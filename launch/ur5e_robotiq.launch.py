@@ -67,7 +67,7 @@ def generate_launch_description():
             description="Prefix of the joint names, useful for multi-robot setup",
         ),
         DeclareLaunchArgument(
-            "use_fake_hardware",
+            "use_mock_hardware",
             default_value="true", 
             description="Start the robot with fake hardware.",
         ),
@@ -195,7 +195,7 @@ def generate_launch_description():
     description_file = LaunchConfiguration("description_file")
     kinematics_params_file = LaunchConfiguration("kinematics_params_file")
     tf_prefix = LaunchConfiguration("tf_prefix")
-    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+    use_mock_hardware = LaunchConfiguration("use_mock_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
     controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
     launch_rviz = LaunchConfiguration("launch_rviz")
@@ -251,7 +251,7 @@ def generate_launch_description():
             " ",
             "sim_isaac:=", sim_isaac,
             " ",
-            "use_fake_hardware:=", use_fake_hardware,
+            "use_mock_hardware:=", use_mock_hardware,
             " ",
             "fake_sensor_commands:=", fake_sensor_commands,
             " ",
