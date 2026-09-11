@@ -9,7 +9,7 @@
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_transmissions.xacro" />
 
   <!-- Robotiq + Intel -->
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
+  <xacro:include filename="$(find asbr_description)/urdf/robotiq_2f_85_macro.urdf.xacro"/>
   <xacro:include filename="$(find robotiq_description)/urdf/ur_to_robotiq_adapter.urdf.xacro"/>
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
   
