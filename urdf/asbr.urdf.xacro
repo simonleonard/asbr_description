@@ -5,7 +5,6 @@
 
   <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
   <!-- ros2 control include -->
-  <xacro:include filename="$(find ur_robot_driver)/urdf/ur.ros2_control.xacro" />
   <xacro:include filename="$(find ur_description)/urdf/inc/ur_transmissions.xacro" />
 
   <!-- Robotiq + Intel -->
@@ -51,6 +50,7 @@
 
     <!-- Simulation parameters -->
   <xacro:arg name="use_mock_hardware" default="false" />
+  <xacro:arg name="sim_gazebo" default="false" />
   <xacro:arg name="mock_sensor_commands" default="false" />
   <xacro:arg name="simulation_controllers" default="" />
 
@@ -80,35 +80,56 @@
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:ur_robot>
 
-  <xacro:ur_ros2_control
+  <xacro:if  value="$(arg sim_gazebo)">
+    <xacro:include filename="$(find ur_simulation_gz)/urdf/ur_gz.ros2_control.xacro" />
+    
+    <xacro:ur_ros2_control
       name="$(arg name)"
       tf_prefix="$(arg tf_prefix)"
-      kinematics_parameters_file="$(arg kinematics_params)"
-      transmission_hw_interface="$(arg transmission_hw_interface)"
-      use_mock_hardware="$(arg use_mock_hardware)"
-      mock_sensor_commands="$(arg mock_sensor_commands)"
-      headless_mode="$(arg headless_mode)"
-      initial_positions="${xacro.load_yaml(initial_positions_file)}"
-      use_tool_communication="$(arg use_tool_communication)"
-      tool_voltage="$(arg tool_voltage)"
-      tool_parity="$(arg tool_parity)"
-      tool_baud_rate="$(arg tool_baud_rate)"
-      tool_stop_bits="$(arg tool_stop_bits)"
-      tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
-      tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
-      tool_device_name="$(arg tool_device_name)"
-      tool_tcp_port="$(arg tool_tcp_port)"
-      robot_ip="$(arg robot_ip)"
-      script_filename="$(arg script_filename)"
-      output_recipe_filename="$(arg output_recipe_filename)"
-      input_recipe_filename="$(arg input_recipe_filename)"
-      reverse_ip="$(arg reverse_ip)"
-      script_command_port="$(arg script_command_port)"
-      reverse_port="$(arg reverse_port)"
-      script_sender_port="$(arg script_sender_port)"
-      trajectory_port="$(arg trajectory_port)">
-  </xacro:ur_ros2_control>
-
+      initial_positions="${xacro.load_yaml(initial_positions_file)}">
+    </xacro:ur_ros2_control>
+    <gazebo reference="world">
+    </gazebo>
+    <gazebo>
+      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(arg simulation_controllers)</parameters>
+        <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
+      </plugin>
+    </gazebo>
+  </xacro:if>
+  
+  <xacro:unless value="$(arg sim_gazebo)">
+    <xacro:include filename="$(find ur_robot_driver)/urdf/ur.ros2_control.xacro" />
+    <xacro:ur_ros2_control
+	name="$(arg name)"
+	tf_prefix="$(arg tf_prefix)"
+	kinematics_parameters_file="$(arg kinematics_params)"
+	transmission_hw_interface="$(arg transmission_hw_interface)"
+	use_mock_hardware="$(arg use_mock_hardware)"
+	mock_sensor_commands="$(arg mock_sensor_commands)"
+	headless_mode="$(arg headless_mode)"
+	initial_positions="${xacro.load_yaml(initial_positions_file)}"
+	use_tool_communication="$(arg use_tool_communication)"
+	tool_voltage="$(arg tool_voltage)"
+	tool_parity="$(arg tool_parity)"
+	tool_baud_rate="$(arg tool_baud_rate)"
+	tool_stop_bits="$(arg tool_stop_bits)"
+	tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
+	tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
+	tool_device_name="$(arg tool_device_name)"
+	tool_tcp_port="$(arg tool_tcp_port)"
+	robot_ip="$(arg robot_ip)"
+	script_filename="$(arg script_filename)"
+	output_recipe_filename="$(arg output_recipe_filename)"
+	input_recipe_filename="$(arg input_recipe_filename)"
+	reverse_ip="$(arg reverse_ip)"
+	script_command_port="$(arg script_command_port)"
+	reverse_port="$(arg reverse_port)"
+	script_sender_port="$(arg script_sender_port)"
+	trajectory_port="$(arg trajectory_port)">
+    </xacro:ur_ros2_control>
+  </xacro:unless>
+  
   <!-- Robotiq -->
   <link name="gripper_pick"/>
   <joint name="gripper_pick_joint" type="fixed">
@@ -125,22 +146,21 @@
       name="gripper" 
       prefix=""
       parent="gripper_mount_link" 
-      sim_ignition="false"
+      sim_ignition="$(arg sim_gazebo)"
       sim_isaac="false"
       include_ros2_control="true"
-      use_fake_hardware="true"
+      use_fake_hardware="$(arg use_mock_hardware)"
       >
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:robotiq_gripper>
   
-  <!-- RealSense -->
-  
+  <!-- RealSense -->  
   <!-- Including the description for the realsense2 camera -->
   <!-- Connecting the camera sensor to the camera link -->
   <xacro:sensor_d435 parent="tool0" name="d435" use_nominal_extrinsics="true" add_plug="true" use_mesh="false"> 
     <origin xyz="0.0 -0.05 0.0" rpy="1.5708 -1.5708 0"/>
   </xacro:sensor_d435>
-  
+
   <!-- Adding the intermediate link between the end effector and the sensor for potentially 
        installing camera adapters -->
   <link name="camera_link">
@@ -154,7 +174,6 @@
 
   <gazebo reference="camera_link">
     <material>Gazebo/Red</material>
-    
     <sensor type="camera" name="camera">
       <update_rate> 30.0 </update_rate>
       <topic> image_raw </topic>
@@ -185,24 +204,10 @@
 	  </intrinsics>
         </lens>
       </camera>
-      <plugin filename="ignition-gazebo-sensors-system"
-              name="ignition::gazebo::systems::Sensors">
+      <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
       </plugin>
     </sensor>
   </gazebo>
-  
-  <!-- *************Gazebo classic and Ignition gazebo if ever needed*********** -->
-  <xacro:if value="$(arg sim_ignition)">
-    <!-- Gazebo plugins -->
-    <gazebo reference="world">
-    </gazebo>
-    <gazebo>
-      <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-        <parameters>$(arg simulation_controllers)</parameters>
-        <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
-      </plugin>
-    </gazebo>
-  </xacro:if>
   
 </robot>
  

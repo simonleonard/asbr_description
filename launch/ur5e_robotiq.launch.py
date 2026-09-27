@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -167,7 +167,7 @@ def generate_launch_description():
             description="Port for trajectory control", 
         ),
         DeclareLaunchArgument(
-            "sim_ignition",
+            "sim_gazebo",
             default_value="false",
             description="Simulate with Ignition Gazebo",
         ),
@@ -215,7 +215,7 @@ def generate_launch_description():
     reverse_port = LaunchConfiguration("reverse_port")
     script_sender_port = LaunchConfiguration("script_sender_port")
     trajectory_port = LaunchConfiguration("trajectory_port")
-    sim_ignition = LaunchConfiguration("sim_ignition")
+    sim_gazebo = LaunchConfiguration("sim_gazebo")
     sim_isaac = LaunchConfiguration("sim_isaac")
     com_port = LaunchConfiguration("com_port")
 
@@ -247,9 +247,7 @@ def generate_launch_description():
             " ",
             "tf_prefix:=", tf_prefix,
             " ",
-            "sim_ignition:=", sim_ignition,
-            " ",
-            "sim_isaac:=", sim_isaac,
+            "sim_gazebo:=", sim_gazebo,
             " ",
             "use_mock_hardware:=", use_mock_hardware,
             " ",
@@ -289,12 +287,17 @@ def generate_launch_description():
         [FindPackageShare(runtime_config_package), "worlds", "empty.sdf"]
     )
 
+    set_gz_resource_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=['/opt/ros/jazzy/share']
+    )
+    
     ignition_launch_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("ros_gz_sim"), "/launch/gz_sim.launch.py"]
         ),
         launch_arguments={"gz_args": [" -r -s -v 3 ", world_file]}.items(),
-        condition=IfCondition(sim_ignition)
+        condition=IfCondition(sim_gazebo)
     )
 
     ignition_spawn_robot = Node(
@@ -309,7 +312,7 @@ def generate_launch_description():
             "-allow_renaming",
             "true",
         ],
-        condition=IfCondition(sim_ignition)
+        condition=IfCondition(sim_gazebo)
     )
 
     # Controllers
@@ -336,12 +339,12 @@ def generate_launch_description():
     ]
     
     controllers_inactive = [
-        "io_and_status_controller",
-        "speed_scaling_state_broadcaster",
-        "force_torque_sensor_broadcaster",
-        "scaled_joint_trajectory_controller",
-        "forward_velocity_controller",
-        "forward_position_controller",
+        #"io_and_status_controller",
+        #"speed_scaling_state_broadcaster",
+        #"force_torque_sensor_broadcaster",
+        #"scaled_joint_trajectory_controller",
+        #"forward_velocity_controller",
+        #"forward_position_controller",
         #"robotiq_activation_controller"
     ]
 
@@ -354,19 +357,30 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[
+            #{"use_sim_time": True},
             robot_description,
             ParameterFile(controllers_file, allow_substs=True),
         ],
         output="screen",
-        condition=UnlessCondition(sim_ignition)
+        condition=UnlessCondition(sim_gazebo)
     )
 
+    gz_clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen',
+        condition=IfCondition(sim_gazebo)
+    )
+    
     nodes_to_start = [
+        set_gz_resource_path,
         robot_state_publisher,
         rviz,
         controller_manager,
         ignition_launch_description,
         ignition_spawn_robot,
+        gz_clock_bridge,
     ] + controller_spawners
 
     return LaunchDescription(declared_arguments +  nodes_to_start)
